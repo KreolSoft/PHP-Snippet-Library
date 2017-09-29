@@ -30,7 +30,7 @@ class camelcase {
 	}
 
 	// Read array and create camelcase
-	public static function fromArray($input, &$output = NULL, $parentName = '') {
+	public static function fromArray($input, &$output = NULL, $parentName = NULL) {
 		if(!$output) {
 			$output = array();
 			$__return = true;
@@ -47,14 +47,14 @@ class camelcase {
 		else {
 			foreach($input as $key => $value) {
 				$key = strtolower($key);
+				$key = ($parentName ? $parentName.ucfirst($key) : $key);
 
 				if(!is_array($value)) {
-					$output[($parentName ? $parentName.ucfirst($key) : $key)] = $value;
+					$output[$key] = $value;
 				}
 				elseif(array_keys($value) === range(0, count($value)-1, 1)) {
-					foreach($value as $val) {
-						$output[($parentName ? $parentName.ucfirst($key) : $key)][] = self::fromArray($val);
-					}
+					foreach($value as $val)
+						$output[$key][] = self::fromArray($val);
 				}
 				else {
 					self::fromArray($value, $output, $key);
